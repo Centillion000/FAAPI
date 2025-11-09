@@ -138,6 +138,7 @@ class UserPartial(UserBase):
         self.title: str = ""
         self.join_date: datetime = datetime.fromtimestamp(0)
         self.avatar_url: str = ""
+        self.user_id: str
 
         self.parse()
 

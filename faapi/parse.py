@@ -6,6 +6,7 @@ from re import MULTILINE
 from re import Pattern
 from re import search
 from re import sub
+from re import findall
 from typing import Any
 from typing import Optional
 from typing import Union
@@ -885,17 +886,18 @@ def parse_watchlist(watch_page: BeautifulSoup) -> tuple[list[tuple[str, str]], O
     )
     next_page: Optional[int] = int(get_attr(tag_next, "value")) if tag_next else None
 
-    watches: list[tuple[str, str]] = []
+    watches: list[tuple[str, str, str]] = []
 
     for tag_user in watch_page.select("div.watch-list-items"):
         user_link: Optional[Tag] = tag_user.select_one("a")
         assert user_link, _raise_exception(ParsingError("Missing user link"))
 
+        [user_id] = findall(r"/user/(.*)/", user_link['href']) # /user/benezia/
         username: str = user_link.text.strip()
         user_link.decompose()
 
         status: str = tag_user.text.strip()
 
-        watches.append((status, username))
+        watches.append((status, username, user_id))
 
     return watches, next_page
